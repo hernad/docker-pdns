@@ -15,6 +15,27 @@ Just use this command to start the container. PowerDNS will listen on port 53/tc
 Login:
 ``` admin / admin ```
 
+# Webserver REST
+
+```curl -H 'X-API-Key: powerdns101' http://127.0.0.1:8081/api/v1/servers | jq .```
+
+
+```docker-pdns $ curl --silent -H 'X-API-Key: secretkey01' http://127.0.0.1:8081/api/v1/servers/localhost/zones | jq .
+[
+  {
+    "account": "",
+    "dnssec": false,
+    "id": "out.ba.",
+    "kind": "Master",
+    "last_check": 0,
+    "masters": [],
+    "name": "out.ba.",
+    "notified_serial": 7200,
+    "serial": 0,
+    "url": "api/v1/servers/localhost/zones/out.ba."
+  }
+]```
+
 # Configuration
 These options can be set:
 
@@ -29,3 +50,4 @@ These options can be set:
 - **POWERADMIN_HOSTMASTER**: default hostmaster (Default: "", Possible Values: "<email>")
 - **POWERADMIN_NS1**: default Nameserver 1 (Default: "", Possible Values: "<domain>")
 - **POWERADMIN_NS2**: default Nameserver 2 (Default: "", Possible Values: "<domain>")
+

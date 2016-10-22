@@ -1,19 +1,30 @@
 version: "2"
 services:
   pdns:
-    build: . 
+    #build: . 
     #image: secns/pdns
+    image: pdns
     ports:
     - "53:53"
     - "53:53/udp"
     - "8080:80"
+    - "8081:8081" #webserver + api rest port
     environment:
-    - PDNS_ALLOW_AXFR_IPS=127.0.0.1
+    - PDNS_ALLOW_AXFR_IPS=127.0.0.1\/32
+    - PDNS_ALLOW_RECURSION=0.0.0.0\/0
+    - PDNS_WEBSERVER_PASSWORD=test01
+    - PDNS_API_KEY=secretkey01
     - PDNS_DISTRIBUTOR_THREADS=3
     - PDNS_CACHE_TTL=20
     - PDNS_RECURSIVE_CACHE_TTL=10
     - DB_ENV_MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
   db:
     image: mysql
+    volumes:
+    - mysql_data:/var/lib/mysql
     environment:
     - MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
+
+volumes:
+   mysql_data:
+     driver: local
