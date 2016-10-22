@@ -74,3 +74,62 @@ ns1.test.pdns.  3600    IN      A       192.168.1.2
 test.pdns.      3600    IN      NS      ns1.test.pdns
 test.pdns.      3600    IN      SOA     ns1.test.pdns podrska.bring.out.ba 1 10800 3600 604800 3600
 ```
+
+# REST
+
+
+```
+docker-pdns $ curl --silent -H 'X-API-Key: secretkey01' http://localhost:8081/api/v1/servers/localhost/zones/test.pdns. | jq .
+{
+  "account": "",
+  "dnssec": false,
+  "id": "test.pdns.",
+  "kind": "Native",
+  "last_check": 0,
+  "masters": [],
+  "name": "test.pdns.",
+  "notified_serial": 0,
+  "rrsets": [
+    {
+      "comments": [],
+      "name": "ns1.test.pdns.",
+      "records": [
+        {
+          "content": "192.168.1.2",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "test.pdns.",
+      "records": [
+        {
+          "content": "ns1.test.pdns. podrska.bring.out.ba. 1 10800 3600 604800 3600",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "SOA"
+    },
+    {
+      "comments": [],
+      "name": "test.pdns.",
+      "records": [
+        {
+          "content": "ns1.test.pdns.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    }
+  ],
+  "serial": 1,
+  "soa_edit": "",
+  "soa_edit_api": "",
+  "url": "api/v1/servers/localhost/zones/test.pdns."
+}
+```
