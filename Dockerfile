@@ -1,5 +1,5 @@
 FROM ubuntu:xenial
-MAINTAINER Patrick Oberdorf <patrick@oberdorf.net>
+MAINTAINER Ernad Husremovic <hernad@bring.out.ba>   # based on Patrick Oberdorf <patrick@oberdorf.net>
 
 # master pgp
 ARG pgp_key=CBC8B383
