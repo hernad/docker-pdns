@@ -51,3 +51,26 @@ These options can be set:
 - **POWERADMIN_NS1**: default Nameserver 1 (Default: "", Possible Values: "<domain>")
 - **POWERADMIN_NS2**: default Nameserver 2 (Default: "", Possible Values: "<domain>")
 
+
+
+# docker exec -ti dockerpdns_pdns_1 bash 
+
+```
+root@6688f910197e:/# pdnsutil create-zone test.pdns ns1.test.pdns    
+Creating empty zone 'test.pdns.'
+Also adding one NS record
+root@6688f910197e:/# pdnsutil add-record test.pdns ns1 A 192.168.1.2  
+New rrset:
+ns1.test.pdns. IN A 3600 192.168.1.2
+root@6688f910197e:/# pdnsutil list-zone test.pdns
+ns1.test.pdns.	3600	IN	A	192.168.1.2
+test.pdns.	3600	IN	NS	ns1.test.pdns.
+test.pdns.	3600	IN	SOA	ns1.test.pdns podrska.bring.out.ba 1 10800 3600 604800 3600
+root@6688f910197e:/# pdnsutil edit-zone test.pdns
+
+; Warning - every name in this file is ABSOLUTE!
+$ORIGIN .
+ns1.test.pdns.  3600    IN      A       192.168.1.2
+test.pdns.      3600    IN      NS      ns1.test.pdns
+test.pdns.      3600    IN      SOA     ns1.test.pdns podrska.bring.out.ba 1 10800 3600 604800 3600
+```
