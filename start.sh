@@ -2,7 +2,7 @@
 MYSQL_HOST=${MYSQL_HOST:-db}
 MYSQL_PORT=${MYSQL_PORT:-3306}
 MYSQL_USER=${MYSQL_USER:-root}
-MYSQL_PASSWORD=${DB_ENV_MYSQL_ROOT_PASSWORD}
+MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
 MYSQL_DB=${MYSQL_DB:-pdns}
 PDNS_ALLOW_AXFR_IPS=${PDNS_ALLOW_AXFR_IPS:-127.0.0.1/32}
 PDNS_MASTER=${PDNS_MASTER:-yes}
@@ -18,19 +18,34 @@ POWERADMIN_NS2=${POWERADMIN_NS2:-}
 PDNS_WEBSERVER_PASSWORD=${PDNS_WEBSERVER_PASSWORD:-powerdns101}
 PDNS_API_KEY=${PDNS_API_KEY:-apikey101}
 
+
 until nc -z ${MYSQL_HOST} ${MYSQL_PORT}; do
     echo "$(date) - waiting for mysql..."
     sleep 1
 done
 
-if mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST} "${MYSQL_DB}" >/dev/null 2>&1 </dev/null
+MYSQL_COMMAND="mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST} ${MYSQL_DB}"
+
+if $MYSQL_COMMAND  >/dev/null 2>&1 </dev/null
 then
 	echo "Database ${MYSQL_DB} already exists"
 else
-	mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST} -e "CREATE DATABASE ${MYSQL_DB}"
-	mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST} ${MYSQL_DB} < /pdns.sql
-	mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST} ${MYSQL_DB} < /poweradmin.sql
+	$MYSQL_COMMAND -e "CREATE DATABASE ${MYSQL_DB}"
+	$MYSQL_COMMAND < /pdns.sql
+	$MYSQL_COMMAND < /poweradmin.sql
 	rm /pdns.sql /poweradmin.sql
+fi
+
+
+if [ "$PDNS_SLAVE"=="yes" ] ; then
+
+#https://www.digitalocean.com/community/tutorials/how-to-configure-dns-replication-on-a-slave-powerdns-server-on-ubuntu-14-04
+
+read -d '' SQL_CMD << EOF
+insert into supermasters values ('${PDNS_MASTER_IP}', '${PDNS_SLAVE_FQDN}', 'admin')
+EOF
+echo "sql_cmd: $SQL_CMD"
+$MYSQL_COMMAND -e "$SQL_CMD"  # insert into supermasters
 fi
 
 ### PDNS
