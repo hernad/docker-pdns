@@ -1,0 +1,10 @@
+PDNS_MASTER_IP="159.203.144.119"
+LABEL_PDNS_SLAVE="out.ba.infra-1"
+
+
+PDNS_SLAVE_IP="37.139.4.121"
+LABEL_PDNS_SLAVE="out.ba.infra-2"
+PDNS_SLAVE_FQDN="ns2.cloud.out.ba"
+
+
+
