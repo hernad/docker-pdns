@@ -39,6 +39,7 @@ docker service create --name pdns \
     -e MYSQL_PORT=3306 \
     -e MYSQL_USER=root \
     -e MYSQL_ROOT_PASSWORD=test01 \
+    -e MYSQL_DB=pdns \
     --network infra-back \
     --constraint 'node.labels.role == out.ba.infra-1' \
     --constraint 'engine.labels.provider == digitalocean' \

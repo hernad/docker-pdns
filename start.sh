@@ -45,7 +45,7 @@ read -d '' SQL_CMD << EOF
 insert into supermasters values ('${PDNS_MASTER_IP}', '${PDNS_SLAVE_FQDN}', 'admin')
 EOF
 echo "sql_cmd: $SQL_CMD"
-$MYSQL_COMMAND -e "$SQL_CMD"  # insert into supermasters
+$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert into supermasters
 fi
 
 ### PDNS
