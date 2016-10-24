@@ -1,16 +1,15 @@
 version: "2"
 services:
   pdns:
-    #build: . 
+    build: . 
     #image: secns/pdns
-    image: pdns
+    image: hernad/pdns
     ports:
-    - "53:53"
     - "53:53/udp"
     - "8080:80"
     - "8081:8081" #webserver + api rest port
     environment:
-    - PDNS_ALLOW_AXFR_IPS=allow-axfr-ips=222.222.222.222\/32
+    - PDNS_ALLOW_AXFR_IPS=138.68.120.194\/32   # ams2 - infra2
     - PDNS_ALLOW_RECURSION=0.0.0.0\/0
     - PDNS_MASTER=yes
     - PDNS_SLAVE=no
@@ -23,8 +22,10 @@ services:
     - MYSQL_PORT=3306
     - MYSQL_USER=root
     - MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
+    networks:
+    - infra-back
     labels:
-      - "constraint:node==out.ba.infra-1" 
+      - "constraint:node=out.ba.infra-1" 
 
   pdns_db:
     image: mysql
@@ -32,19 +33,20 @@ services:
     - pdns_mysql_data:/var/lib/mysql
     environment:
     - MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
+    networks:
+    - infra-back
     labels:
-      - "constraint:node==out.ba.infra-1" 
+      - "constraint:node=out.ba.infra-1" 
 
 
   pdns_slave:
-    image: pdns
+    image: hernad/pdns
     ports:
-    - "53:53"
-    - "53:53/udp"
-    - "8080:80"
-    - "8081:8081" #webserver + api rest port
+    - "531:53/udp"
+    - "8082:80"
+    - "8083:8081" #webserver + api rest port
     environment:
-    - PDNS_ALLOW_AXFR_IPS=127.0.0.1\/32
+    - PDNS_ALLOW_AXFR_IPS=159.203.144.119\/32  #  dc1-us newyork
     - PDNS_ALLOW_RECURSION=0.0.0.0\/0
     - PDNS_MASTER=no
     - PDNS_SLAVE=yes
@@ -59,8 +61,10 @@ services:
     - MYSQL_PORT=3306
     - MYSQL_USER=root
     - MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
-     labels:
-      - "constraint:node==out.ba.infra-2"
+    networks:
+    - infra-back
+    labels:
+      - "constraint:node=out.ba.infra-2"
 
   pdns_slave_db:
     image: mysql
@@ -68,9 +72,14 @@ services:
     - pdns_slave_mysql_data:/var/lib/mysql
     environment:
     - MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
+    networks:
+    - infra-back
     labels:
-      - "constraint:node==out.ba.infra-2"
+      - "constraint:node=out.ba.infra-2"
 
+networks:
+   infra-back:
+     driver: overlay
 
 volumes:
    pdns_mysql_data:

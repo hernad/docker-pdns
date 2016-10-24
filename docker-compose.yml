@@ -18,12 +18,20 @@ services:
     - PDNS_CACHE_TTL=20
     - PDNS_RECURSIVE_CACHE_TTL=10
     - DB_ENV_MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
+    networks:
+    - back
   db:
     image: mysql
+    networks:
+    - back
     volumes:
     - mysql_data:/var/lib/mysql
     environment:
     - MYSQL_ROOT_PASSWORD=aPYsB84zdNZNmn64sjy
+
+networks:
+  back:
+    driver: overlay
 
 volumes:
    mysql_data:

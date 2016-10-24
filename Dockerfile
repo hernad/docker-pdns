@@ -65,7 +65,7 @@ COPY assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start.sh /start.sh
 
 COPY assets/nginx/default /etc/nginx/sites-enabled/default
-EXPOSE 53 80 8081
+EXPOSE 80 8081
 EXPOSE 53/udp
 
 CMD ["/bin/bash", "/start.sh"]

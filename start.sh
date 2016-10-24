@@ -24,18 +24,18 @@ until nc -z ${MYSQL_HOST} ${MYSQL_PORT}; do
     sleep 1
 done
 
-MYSQL_COMMAND="mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST} ${MYSQL_DB}"
 
-if $MYSQL_COMMAND  >/dev/null 2>&1 </dev/null
+MYSQL_COMMAND="mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST}"
+
+if $MYSQL_COMMAND $MYSQL_DB  >/dev/null 2>&1 </dev/null
 then
-	echo "Database ${MYSQL_DB} already exists"
+        echo "Database ${MYSQL_DB} already exists"
 else
-	$MYSQL_COMMAND -e "CREATE DATABASE ${MYSQL_DB}"
-	$MYSQL_COMMAND < /pdns.sql
-	$MYSQL_COMMAND < /poweradmin.sql
-	rm /pdns.sql /poweradmin.sql
+        $MYSQL_COMMAND -e "CREATE DATABASE ${MYSQL_DB}"
+        $MYSQL_COMMAND ${MYSQL_DB}  < /pdns.sql
+        $MYSQL_COMMAND ${MYSQL_DB} < /poweradmin.sql
+        #rm /pdns.sql /poweradmin.sql
 fi
-
 
 if [ "$PDNS_SLAVE"=="yes" ] ; then
 
