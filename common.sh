@@ -1,5 +1,6 @@
 
 PDNS_DOMAIN="example.org"
+PDNS_NETWORK="infra_net"
 
 #PDNS_MASTER_IP="159.203.144.119"
 #LABEL_PDNS_MASTER="out.ba.infra-1"

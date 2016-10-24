@@ -25,7 +25,7 @@ CMD+=" --replicas 1"
 CMD+=" $CONSTRAINT"
 CMD+=" --mount type=volume,source=pdns_mysql_data,destination=/var/lib/mysql"
 CMD+=" -e MYSQL_ROOT_PASSWORD=test01"
-CMD+=" --network infra-back"
+CMD+=" --network $PDNS_NETWORK"
 CMD+=" mysql"
 
 echo $CMD
@@ -56,6 +56,6 @@ docker service create --name pdns \
     -e MYSQL_USER=root \
     -e MYSQL_ROOT_PASSWORD=test01 \
     -e MYSQL_DB=pdns \
-    --network infra-back \
+    --network $PDNS_NETWORK \
     $CONSTRAINT \
     hernad/pdns

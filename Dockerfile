@@ -16,6 +16,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
    && apt-get install -y \
 	wget \
         netcat \
+        iputils-ping net-tools \
         vim \
 	git \
 	supervisor \

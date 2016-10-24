@@ -23,7 +23,7 @@ docker service create --name  pdns_slave_db \
     --replicas 1 \
     --mount type=volume,source=pdns_slave_mysql_data,destination=/var/lib/mysql \
     -e MYSQL_ROOT_PASSWORD=test01 \
-    --network infra-back \
+    --network $PDNS_NETWORK \
     $CONSTRAINTS \
     mysql
 
@@ -53,6 +53,6 @@ docker service create --name pdns_slave \
     -e MYSQL_DB=pdns_slave \
     -e PDNS_MASTER_IP="${PDNS_MASTER_IP}" \
     -e PDNS_SLAVE_FQDN="${PDNS_SLAVE_FQDN}" \
-    --network infra-back \
+    --network $PDNS_NETWORK \
     $CONSTRAINTS \
     hernad/pdns
