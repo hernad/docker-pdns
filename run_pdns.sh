@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./common.sh
+
 docker service rm pdns
 docker service rm pdns_db
 
@@ -8,15 +10,13 @@ echo "=== MASTER PDNS ===="
 #docker volume rm pdns_mysql_data
 #docker volume create --name pdns_mysql_data
 
-PDNS_SLAVE_IP="37.139.4.121"
-
 echo pdns_db
 docker service create --name  pdns_db \
     --replicas 1 \
     --mount type=volume,source=pdns_mysql_data,destination=/var/lib/mysql \
     -e MYSQL_ROOT_PASSWORD=test01 \
     --network infra-back \
-    --constraint 'node.labels.role == out.ba.infra-1' \
+    --constraint "node.labels.role == $LABEL_PDNS_MASTER" \
     --constraint 'engine.labels.provider == digitalocean' \
     mysql
 
@@ -44,6 +44,6 @@ docker service create --name pdns \
     -e MYSQL_ROOT_PASSWORD=test01 \
     -e MYSQL_DB=pdns \
     --network infra-back \
-    --constraint 'node.labels.role == out.ba.infra-1' \
+    --constraint "node.labels.role == $LABEL_PDNS_MASTER" \
     --constraint 'engine.labels.provider == digitalocean' \
     hernad/pdns

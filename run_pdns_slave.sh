@@ -1,9 +1,12 @@
 #!/bin/bash
 
+./common.sh
+echo ======= PDNS SLAVE ===========
+
+
 docker service rm pdns_slave
 docker service rm pdns_slave_db
 
-echo ======= PDNS SLAVE ===========
 
 
 #docker volume rm pdns_slave_mysql_data
@@ -12,15 +15,13 @@ echo ======= PDNS SLAVE ===========
 echo pdns_db
 #https://docs.docker.com/swarm/scheduler/filter/
 
-PDNS_MASTER_IP="159.203.144.119"
-PDNS_SLAVE_FQDN="ns2.cloud.out.ba"
 
 docker service create --name  pdns_slave_db \
     --replicas 1 \
     --mount type=volume,source=pdns_slave_mysql_data,destination=/var/lib/mysql \
     -e MYSQL_ROOT_PASSWORD=test01 \
     --network infra-back \
-    --constraint 'node.labels.role == out.ba.infra-2' \
+    --constraint "node.labels.role == $LABEL_PDNS_SLAVE" \
     --constraint 'engine.labels.provider == digitalocean' \
     mysql
 
@@ -50,6 +51,6 @@ docker service create --name pdns_slave \
     -e PDNS_MASTER_IP="${PDNS_MASTER_IP}" \
     -e PDNS_SLAVE_FQDN="${PDNS_SLAVE_FQDN}" \
     --network infra-back \
-    --constraint 'node.labels.role == out.ba.infra-2' \
+    --constraint "node.labels.role == $LABEL_PDNS_SLAVE" \
     --constraint 'engine.labels.provider == digitalocean' \
     hernad/pdns
