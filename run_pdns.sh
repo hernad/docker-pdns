@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./common.sh
+. common.sh
 
 docker service rm pdns
 docker service rm pdns_db
@@ -10,15 +10,27 @@ echo "=== MASTER PDNS ===="
 #docker volume rm pdns_mysql_data
 #docker volume create --name pdns_mysql_data
 
+CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_MASTER}"
+CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
+
+
+
+echo "$CONSTRAINT"
+
 echo pdns_db
-docker service create --name  pdns_db \
-    --replicas 1 \
-    --mount type=volume,source=pdns_mysql_data,destination=/var/lib/mysql \
-    -e MYSQL_ROOT_PASSWORD=test01 \
-    --network infra-back \
-    --constraint "node.labels.role == $LABEL_PDNS_MASTER" \
-    --constraint 'engine.labels.provider == digitalocean' \
-    mysql
+
+
+CMD="docker service create --name  pdns_db"
+CMD+=" --replicas 1"
+CMD+=" $CONSTRAINT"
+CMD+=" --mount type=volume,source=pdns_mysql_data,destination=/var/lib/mysql"
+CMD+=" -e MYSQL_ROOT_PASSWORD=test01"
+CMD+=" --network infra-back"
+CMD+=" mysql"
+
+echo $CMD
+$CMD
+echo ===================
 
 
 #-e PDNS_ALLOW_AXFR_IPS="${PDNS_SLAVE_IP}\/32"  \
@@ -44,6 +56,5 @@ docker service create --name pdns \
     -e MYSQL_ROOT_PASSWORD=test01 \
     -e MYSQL_DB=pdns \
     --network infra-back \
-    --constraint "node.labels.role == $LABEL_PDNS_MASTER" \
-    --constraint 'engine.labels.provider == digitalocean' \
+    $CONSTRAINT \
     hernad/pdns
