@@ -3,6 +3,8 @@
 docker service rm pdns_slave
 docker service rm pdns_slave_db
 
+echo ======= PDNS SLAVE ===========
+
 
 #docker volume rm pdns_slave_mysql_data
 #docker volume create --name pdns_slave_mysql_data
@@ -23,16 +25,18 @@ docker service create --name  pdns_slave_db \
     mysql
 
 
+#-e PDNS_ALLOW_AXFR_IPS="${PDNS_MASTER_IP}\/32"  \
+
 echo pdns
 docker service create --name pdns_slave \
     --replicas 1 \
     -p 532:53/udp \
     -p 8082:80 \
     -p 8083:8081 \
-    -e PDNS_ALLOW_AXFR_IPS="${PDNS_MASTER_IP}\/32"  \
     -e PDNS_ALLOW_RECURSION="0.0.0.0\/0" \
-    -e PDNS_MASTER=yes \
-    -e PDNS_SLAVE=no \
+    -e PDNS_ALLOW_AXFR_IPS="${PDNS_MASTER_IP}"  \
+    -e PDNS_MASTER=no \
+    -e PDNS_SLAVE=yes \
     -e PDNS_WEBSERVER_PASSWORD=test01 \
     -e PDNS_API_KEY=secretkey01 \
     -e PDNS_DISTRIBUTOR_THREADS=3 \
