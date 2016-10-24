@@ -17,7 +17,7 @@ POWERADMIN_NS1=${POWERADMIN_NS1:-}
 POWERADMIN_NS2=${POWERADMIN_NS2:-}
 PDNS_WEBSERVER_PASSWORD=${PDNS_WEBSERVER_PASSWORD:-powerdns101}
 PDNS_API_KEY=${PDNS_API_KEY:-apikey101}
-
+PDNS_DOMAIN=${PDNS_DOMAIN:-example.org}
 
 until nc -z ${MYSQL_HOST} ${MYSQL_PORT}; do
     echo "$(date) - waiting for mysql..."
@@ -26,6 +26,8 @@ done
 
 
 MYSQL_COMMAND="mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --host=${MYSQL_HOST}"
+
+
 
 if $MYSQL_COMMAND $MYSQL_DB  >/dev/null 2>&1 </dev/null
 then
@@ -37,7 +39,7 @@ else
         #rm /pdns.sql /poweradmin.sql
 fi
 
-if [ "$PDNS_SLAVE"=="yes" ] ; then
+if [ "$PDNS_SLAVE" == "yes" ] ; then
 
 #https://www.digitalocean.com/community/tutorials/how-to-configure-dns-replication-on-a-slave-powerdns-server-on-ubuntu-14-04
 
@@ -46,6 +48,19 @@ insert into supermasters values ('${PDNS_MASTER_IP}', '${PDNS_SLAVE_FQDN}', 'adm
 EOF
 echo "sql_cmd: $SQL_CMD"
 $MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert into supermasters
+
+else
+
+read -d '' SQL_CMD << EOF
+INSERT INTO domains (name, type) VALUES ('$PDNS_DOMAIN', 'MASTER');
+INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$', 'ns1.$PDNS_DOMAIN hostmaster.$PDNS_DOMAIN 1', 'SOA', 86400, NULL);
+INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns1.$PDNS_DOMAIN', 'NS', 86400, NULL);
+INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns2.$PDNS_DOMAIN', 'NS', 86400, NULL);
+INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns1.$PDNS_DOMAIN', '10.0.0.1', 'A', 86400, NULL);
+INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns2.$PDNS_DOMAIN', '10.0.0.2', 'A', 86400, NULL);
+EOF
+
+$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert example.org sample records
 fi
 
 ### PDNS

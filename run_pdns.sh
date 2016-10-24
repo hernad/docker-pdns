@@ -42,6 +42,7 @@ docker service create --name pdns \
     -p 8080:80 \
     -p 8081:8081 \
     -e PDNS_ALLOW_AXFR_IPS="${PDNS_SLAVE_IP}"  \
+    -e PDNS_DOMAIN="$PDNS_DOMAIN" \
     -e PDNS_ALLOW_RECURSION="0.0.0.0\/0" \
     -e PDNS_MASTER=yes \
     -e PDNS_SLAVE=no \
