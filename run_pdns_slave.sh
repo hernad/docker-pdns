@@ -15,8 +15,8 @@ docker service rm pdns_slave_db
 echo pdns_db
 #https://docs.docker.com/swarm/scheduler/filter/
 
-#CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_SLAVE}"
-#CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
+CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_SLAVE}"
+CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
 
 
 docker service create --name  pdns_slave_db \
@@ -41,7 +41,7 @@ docker service create --name pdns_slave \
     -e PDNS_DOMAIN="$PDNS_DOMAIN" \
     -e PDNS_MASTER=no \
     -e PDNS_SLAVE=yes \
-    -e PDNS_WEBSERVER_PASSWORD=test01 \
+    -e PDNS_WEBSERVER_PASSWORD="$PDNS_WEBSERVER_PASSWORD" \
     -e PDNS_API_KEY=secretkey01 \
     -e PDNS_DISTRIBUTOR_THREADS=3 \
     -e PDNS_CACHE_TTL=20 \
@@ -49,7 +49,7 @@ docker service create --name pdns_slave \
     -e MYSQL_HOST=pdns_slave_db \
     -e MYSQL_PORT=3306 \
     -e MYSQL_USER=root \
-    -e MYSQL_ROOT_PASSWORD=test01 \
+    -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
     -e MYSQL_DB=pdns_slave \
     -e PDNS_MASTER_IP="${PDNS_MASTER_IP}" \
     -e PDNS_SLAVE_FQDN="${PDNS_SLAVE_FQDN}" \
