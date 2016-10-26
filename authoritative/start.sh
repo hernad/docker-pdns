@@ -1,4 +1,5 @@
 #!/bin/bash
+
 MYSQL_HOST=${MYSQL_HOST:-db}
 MYSQL_PORT=${MYSQL_PORT:-3306}
 MYSQL_USER=${MYSQL_USER:-root}
@@ -53,13 +54,12 @@ else
 
 # master
 
-#export DOMAIN=test2.ba NS1_IP=10.0.2.5 NS2_IP=10.0.2.9
-pdnsutil create-zone $PDNS_DOMAIN ns1.$PDNS_DOMAIN
-pdnsutil add-record $PDNS_DOMAIN @ NS ns2.$PDNS_DOMAIN 
-pdnsutil add-record $PDNS_DOMAIN ns1 A $PDNS_AUTH_MASTER_IP
-pdnsutil add-record $PDNS_DOMAIN ns2 A $PDNS_AUTH_SLAVE_IP
-pdnsutil add-record $PDNS_DOMAIN prvi A 1.1.1.1
-pdnsutil list-zone $PDNS_DOMAIN
+/usr/bin/pdnsutil create-zone $PDNS_DOMAIN ns1.$PDNS_DOMAIN
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN @ NS ns2.$PDNS_DOMAIN 
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN ns1 A $PDNS_AUTH_MASTER_IP
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN ns2 A $PDNS_AUTH_SLAVE_IP
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN prvi A 1.1.1.1
+/usr/bin/pdnsutil list-zone $PDNS_DOMAIN
 
 #read -d '' SQL_CMD << EOF
 #INSERT INTO domains (name, type) VALUES ('$PDNS_DOMAIN', 'MASTER');
