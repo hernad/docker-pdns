@@ -2,15 +2,16 @@ FROM ubuntu:xenial
 MAINTAINER Ernad Husremovic <hernad@bring.out.ba>   # based on Patrick Oberdorf <patrick@oberdorf.net>
 
 # master pgp
-ARG pgp_key=CBC8B383
+#ARG pgp_key=CBC8B383
 # 4.0 pgp
-#ARG pgp_key=FD380FBB
-
+ARG pgp_key=FD380FBB
+ARG pdns_branch=40
 
 COPY assets/apt/preferences.d/pdns /etc/apt/preferences.d/pdns
 RUN apt-get update && apt-get install -y curl \
 	&& curl https://repo.powerdns.com/${pgp_key}-pub.asc | apt-key add - \
-	&& echo "deb [arch=amd64] http://repo.powerdns.com/ubuntu xenial-auth-master main" > /etc/apt/sources.list.d/pdns.list
+	&& echo "deb [arch=amd64] http://repo.powerdns.com/ubuntu xenial-auth-${pdns_branch} main" > /etc/apt/sources.list.d/pdns.list \
+        && apt-get update
 
 RUN export DEBIAN_FRONTEND=noninteractive \
    && apt-get install -y \
