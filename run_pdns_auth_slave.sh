@@ -12,19 +12,18 @@ docker service rm pdns_slave_db
 #docker volume rm pdns_slave_mysql_data
 #docker volume create --name pdns_slave_mysql_data
 
-echo pdns_db
 #https://docs.docker.com/swarm/scheduler/filter/
 
-CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_AUTH_SLAVE}"
-#CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
+CONSTRAINTS="--constraint node.labels.role==${LABEL_PDNS_AUTH_SLAVE}"
+#CONSTRAINTS+=" --constraint engine.labels.provider==digitalocean "
 
 
 docker service create --name  pdns_slave_db \
     --replicas 1 \
     --mount type=volume,source=pdns_slave_mysql_data,destination=/var/lib/mysql \
-    -e MYSQL_ROOT_PASSWORD=test01 \
-    --network $PDNS_NETWORK \
+    -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
     $CONSTRAINTS \
+    --network $PDNS_NETWORK \
     mysql
 
 
@@ -42,7 +41,7 @@ docker service create --name pdns_slave \
     -e PDNS_AUTH_MASTER=no \
     -e PDNS_AUTH_SLAVE=yes \
     -e PDNS_WEBSERVER_PASSWORD="$PDNS_WEBSERVER_PASSWORD" \
-    -e PDNS_API_KEY=secretkey01 \
+    -e PDNS_API_KEY=${PDNS_API_KEY} \
     -e PDNS_DISTRIBUTOR_THREADS=3 \
     -e PDNS_CACHE_TTL=20 \
     -e PDNS_RECURSIVE_CACHE_TTL=10 \

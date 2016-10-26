@@ -10,19 +10,16 @@ echo "=== MASTER PDNS ===="
 #docker volume rm pdns_mysql_data
 #docker volume create --name pdns_mysql_data
 
-CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_AUTH_MASTER}"
-#CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
+CONSTRAINTS="--constraint node.labels.role==${LABEL_PDNS_AUTH_MASTER}"
+#CONSTRAINTS+=" --constraint engine.labels.provider==digitalocean "
 
 
 
 echo "$CONSTRAINT"
 
-echo pdns_db
-
-
 CMD="docker service create --name  pdns_db"
 CMD+=" --replicas 1"
-CMD+=" $CONSTRAINT"
+CMD+=" $CONSTRAINTS"
 CMD+=" --mount type=volume,source=pdns_mysql_data,destination=/var/lib/mysql"
 CMD+=" -e MYSQL_ROOT_PASSWORD=test01"
 CMD+=" --network $PDNS_NETWORK"
@@ -48,7 +45,7 @@ docker service create --name pdns \
     -e PDNS_AUTH_MASTER=yes \
     -e PDNS_AUTH_SLAVE=no \
     -e PDNS_WEBSERVER_PASSWORD="$PDNS_WEBSERVER_PASSWORD" \
-    -e PDNS_API_KEY=secretkey01 \
+    -e PDNS_API_KEY=${PDNS_API_KEY}  \
     -e PDNS_DISTRIBUTOR_THREADS=3 \
     -e PDNS_CACHE_TTL=20 \
     -e PDNS_RECURSIVE_CACHE_TTL=10 \
@@ -58,5 +55,5 @@ docker service create --name pdns \
     -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
     -e MYSQL_DB=pdns \
     --network $PDNS_NETWORK \
-    $CONSTRAINT \
+    $CONSTRAINTS \
     hernad/pdns
