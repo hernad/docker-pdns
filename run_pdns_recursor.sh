@@ -4,7 +4,7 @@
 
 docker service rm pdns-recursor
 
-echo "=== MASTER PDNS ===="
+echo "=== PDNS-RECURSOR ===="
 
 #docker volume rm pdns_mysql_data
 #docker volume create --name pdns_mysql_data

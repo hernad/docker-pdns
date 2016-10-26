@@ -18,12 +18,12 @@ POWERADMIN_NS2=${POWERADMIN_NS2:-}
 PDNS_WEBSERVER_PASSWORD=${PDNS_WEBSERVER_PASSWORD:-powerdns101}
 PDNS_API_KEY=${PDNS_API_KEY:-apikey101}
 PDNS_DOMAIN=${PDNS_DOMAIN:-example.org}
-PDNS_RECURSOR_ALLOW=${PDNS_RECURSOR_ALLOW:-10.0.0.0\/8,172.16.0.0\/12,192.168.0.0\/16} # https://doc.powerdns.com/md/recursor/settings/#allow-from
+PDNS_RECURSOR_ALLOW=${PDNS_RECURSOR_ALLOW:-10.0.0.0\\/8,172.16.0.0\\/12,192.168.0.0\\/16} # https://doc.powerdns.com/md/recursor/settings/#allow-from
 
-### PDNS
-sed -i "s/{{PDNS_WEBSERVER_PASSWORD}}/${PDNS_WEBSERVER_PASSWORD}/" /etc/powerdns/pdns.conf
-sed -i "s/{{PDNS_API_KEY}}/${PDNS_API_KEY}/" /etc/powerdns/pdns.conf
-sed -i "s/{{PDNS_RECURSOR_ALLOW}}/${PDNS_RECURSOR_ALLOW}/" /etc/powerdns/pdns.conf
+### PDNS-RECURSOR
+sed -i "s/{{PDNS_WEBSERVER_PASSWORD}}/${PDNS_WEBSERVER_PASSWORD}/" /etc/powerdns/recursor.conf
+sed -i "s/{{PDNS_API_KEY}}/${PDNS_API_KEY}/" /etc/powerdns/recursor.conf
+sed -i "s/{{PDNS_RECURSOR_ALLOW}}/${PDNS_RECURSOR_ALLOW}/" /etc/powerdns/recursor.conf
 
 exec /usr/bin/supervisord
 
