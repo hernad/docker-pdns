@@ -15,7 +15,7 @@ docker service rm pdns_slave_db
 echo pdns_db
 #https://docs.docker.com/swarm/scheduler/filter/
 
-CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_SLAVE}"
+CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_AUTH_SLAVE}"
 #CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
 
 
@@ -28,8 +28,6 @@ docker service create --name  pdns_slave_db \
     mysql
 
 
-#-e PDNS_ALLOW_AXFR_IPS="${PDNS_MASTER_IP}\/32"  \
-
 echo pdns
 docker service create --name pdns_slave \
     --replicas 1 \
@@ -39,8 +37,8 @@ docker service create --name pdns_slave \
     -e PDNS_ALLOW_RECURSION="0.0.0.0\/0" \
     -e PDNS_ALLOW_AXFR_IPS="${PDNS_ALLOW_AXFR_IPS}"  \
     -e PDNS_DOMAIN="$PDNS_DOMAIN" \
-    -e PDNS_MASTER=no \
-    -e PDNS_SLAVE=yes \
+    -e PDNS_AUTH_MASTER=no \
+    -e PDNS_AUTH_SLAVE=yes \
     -e PDNS_WEBSERVER_PASSWORD="$PDNS_WEBSERVER_PASSWORD" \
     -e PDNS_API_KEY=secretkey01 \
     -e PDNS_DISTRIBUTOR_THREADS=3 \
@@ -51,8 +49,8 @@ docker service create --name pdns_slave \
     -e MYSQL_USER=root \
     -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
     -e MYSQL_DB=pdns_slave \
-    -e PDNS_MASTER_IP="${PDNS_MASTER_IP}" \
-    -e PDNS_SLAVE_FQDN="${PDNS_SLAVE_FQDN}" \
+    -e PDNS_AUTH_MASTER_IP="${PDNS_AUTH_MASTER_IP}" \
+    -e PDNS_AUTH_SLAVE_FQDN="${PDNS_AUTH_SLAVE_FQDN}" \
     --network $PDNS_NETWORK \
     $CONSTRAINTS \
     hernad/pdns

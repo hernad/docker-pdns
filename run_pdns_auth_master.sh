@@ -10,7 +10,7 @@ echo "=== MASTER PDNS ===="
 #docker volume rm pdns_mysql_data
 #docker volume create --name pdns_mysql_data
 
-CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_MASTER}"
+CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_AUTH_MASTER}"
 #CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
 
 
@@ -43,8 +43,8 @@ docker service create --name pdns \
     -e PDNS_ALLOW_AXFR_IPS="${PDNS_ALLOW_AXFR_IPS}"  \
     -e PDNS_DOMAIN="$PDNS_DOMAIN" \
     -e PDNS_ALLOW_RECURSION="0.0.0.0\/0" \
-    -e PDNS_MASTER=yes \
-    -e PDNS_SLAVE=no \
+    -e PDNS_AUTH_MASTER=yes \
+    -e PDNS_AUTH_SLAVE=no \
     -e PDNS_WEBSERVER_PASSWORD="$PDNS_WEBSERVER_PASSWORD" \
     -e PDNS_API_KEY=secretkey01 \
     -e PDNS_DISTRIBUTOR_THREADS=3 \
