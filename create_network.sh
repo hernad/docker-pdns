@@ -6,5 +6,5 @@ echo PDNS_NETWORK: $PDNS_NETWORK
 
 docker network create \
   --driver overlay \
-  --subnet 10.0.9.0/24 \
+  --subnet 10.0.2.0/24 \
   $PDNS_NETWORK

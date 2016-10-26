@@ -34,8 +34,8 @@ echo pdns
 docker service create --name pdns_slave \
     --replicas 1 \
     -p 532:53/udp \
-    -p 8082:80 \
-    -p 8083:8081 \
+    -p 8084:80 \
+    -p 8085:8081 \
     -e PDNS_ALLOW_RECURSION="0.0.0.0\/0" \
     -e PDNS_ALLOW_AXFR_IPS="${PDNS_ALLOW_AXFR_IPS}"  \
     -e PDNS_DOMAIN="$PDNS_DOMAIN" \
