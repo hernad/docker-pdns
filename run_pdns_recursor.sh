@@ -14,13 +14,14 @@ echo "$CONSTRAINT"
 echo pdns
 docker service create --name pdns-recursor \
     --replicas 2 \
-    -p 530:53/udp \
+    -p 53:53/udp \
     -p 8080:80 \
     -p 8081:8081 \
     -e PDNS_DOMAIN="$PDNS_DOMAIN" \
     -e PDNS_WEBSERVER_PASSWORD="$PDNS_WEBSERVER_PASSWORD" \
     -e PDNS_API_KEY=secretkey01 \
     -e PDNS_RECURSOR_ALLOW=${PDNS_RECURSOR_ALLOW} \
+    -e PDNS_RECURSOR_FORWARD_ZONES=${PDNS_RECURSOR_FORWARD_ZONES} \
     --network $PDNS_NETWORK \
     $CONSTRAINT \
     hernad/pdns-recursor

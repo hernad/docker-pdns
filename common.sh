@@ -25,10 +25,11 @@ PDNS_WEBSERVER_PASSWORD="test01"
 MYSQL_ROOT_PASSWORD="test01"
 
 PDNS_RECURSOR_ALLOW="127.0.0.1,10.0.0.0\\/8,172.16.0.0\\/12,192.168.0.0\\/16"
-PDNS_RECURSOR_ALLOW+=",92.36.155.3" ## adsl.out.ba
+#PDNS_RECURSOR_ALLOW+=",92.36.155.3" ## adsl.out.ba
 
 
-RECURSOR_FORWARD_ZONES="test2.ba example.org example.com"
+#RECURSOR_FORWARD_ZONES="test2.ba example.org example.com"
+RECURSOR_FORWARD_ZONES="." #forward=zones=.=ns_1_ip;ns_2_ip - everything goes to ns_1_ip, ns_2_ip
 
 PDNS_RECURSOR_FORWARD_ZONES="" #forward-zones=example.org=203.0.113.210:5300;127.0.0.1,
 
