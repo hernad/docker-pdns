@@ -14,7 +14,7 @@ echo "$CONSTRAINT"
 echo pdns
 docker service create --name pdns-recursor \
     --replicas 2 \
-    -p 53:53/udp \
+    -p 530:53/udp \
     -p 8080:80 \
     -p 8081:8081 \
     -e PDNS_DOMAIN="$PDNS_DOMAIN" \
