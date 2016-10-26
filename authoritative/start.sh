@@ -40,40 +40,6 @@ else
         #rm /pdns.sql /poweradmin.sql
 fi
 
-if [ "$PDNS_AUTH_SLAVE" == "yes" ] ; then
-
-#https://www.digitalocean.com/community/tutorials/how-to-configure-dns-replication-on-a-slave-powerdns-server-on-ubuntu-14-04
-
-read -d '' SQL_CMD << EOF
-insert into supermasters values ('${PDNS_AUTH_MASTER_IP}', '${PDNS_AUTH_SLAVE_FQDN}', 'admin')
-EOF
-echo "sql_cmd: $SQL_CMD"
-$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert into supermasters
-
-else
-
-# master
-
-/usr/bin/pdnsutil create-zone $PDNS_DOMAIN ns1.$PDNS_DOMAIN
-/usr/bin/pdnsutil add-record $PDNS_DOMAIN @ NS ns2.$PDNS_DOMAIN 
-/usr/bin/pdnsutil add-record $PDNS_DOMAIN ns1 A $PDNS_AUTH_MASTER_IP
-/usr/bin/pdnsutil add-record $PDNS_DOMAIN ns2 A $PDNS_AUTH_SLAVE_IP
-/usr/bin/pdnsutil add-record $PDNS_DOMAIN prvi A 1.1.1.1
-/usr/bin/pdnsutil list-zone $PDNS_DOMAIN
-
-#read -d '' SQL_CMD << EOF
-#INSERT INTO domains (name, type) VALUES ('$PDNS_DOMAIN', 'MASTER');
-#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$', 'ns1.$PDNS_DOMAIN hostmaster.$PDNS_DOMAIN 1', 'SOA', 86400, NULL);
-#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns1.$PDNS_DOMAIN', 'NS', 86400, NULL);
-#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns2.$PDNS_DOMAIN', 'NS', 86400, NULL);
-#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns1.$PDNS_DOMAIN', '10.0.0.1', 'A', 86400, NULL);
-#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns2.$PDNS_DOMAIN', '10.0.0.2', 'A', 86400, NULL);
-#EOF
-
-#$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert example.org sample records
-
-fi
-
 ### PDNS
 sed -i "s/{{MYSQL_HOST}}/${MYSQL_HOST}/" /etc/powerdns/pdns.d/pdns.local.gmysql.conf
 sed -i "s/{{MYSQL_PORT}}/${MYSQL_PORT}/" /etc/powerdns/pdns.d/pdns.local.gmysql.conf
@@ -101,5 +67,36 @@ sed -i "s/{{POWERADMIN_HOSTMASTER}}/${POWERADMIN_HOSTMASTER}/" /var/www/html/inc
 sed -i "s/{{POWERADMIN_NS1}}/${POWERADMIN_NS1}/" /var/www/html/inc/config.inc.php
 sed -i "s/{{POWERADMIN_NS2}}/${POWERADMIN_NS2}/" /var/www/html/inc/config.inc.php
 
-exec /usr/bin/supervisord
 
+if [ "$PDNS_AUTH_SLAVE" == "yes" ] ; then
+
+#https://www.digitalocean.com/community/tutorials/how-to-configure-dns-replication-on-a-slave-powerdns-server-on-ubuntu-14-04
+read -d '' SQL_CMD << EOF
+insert into supermasters values ('${PDNS_AUTH_MASTER_IP}', '${PDNS_AUTH_SLAVE_FQDN}', 'admin')
+EOF
+echo "sql_cmd: $SQL_CMD"
+$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert into supermasters
+
+else
+
+# master
+/usr/bin/pdnsutil create-zone $PDNS_DOMAIN ns1.$PDNS_DOMAIN
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN @ NS ns2.$PDNS_DOMAIN 
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN ns1 A $PDNS_AUTH_MASTER_IP
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN ns2 A $PDNS_AUTH_SLAVE_IP
+/usr/bin/pdnsutil add-record $PDNS_DOMAIN prvi A 1.1.1.1
+/usr/bin/pdnsutil list-zone $PDNS_DOMAIN
+
+#read -d '' SQL_CMD << EOF
+#INSERT INTO domains (name, type) VALUES ('$PDNS_DOMAIN', 'MASTER');
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$', 'ns1.$PDNS_DOMAIN hostmaster.$PDNS_DOMAIN 1', 'SOA', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns1.$PDNS_DOMAIN', 'NS', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns2.$PDNS_DOMAIN', 'NS', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns1.$PDNS_DOMAIN', '10.0.0.1', 'A', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns2.$PDNS_DOMAIN', '10.0.0.2', 'A', 86400, NULL);
+#EOF
+#$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert example.org sample records
+
+fi
+
+exec /usr/bin/supervisord
