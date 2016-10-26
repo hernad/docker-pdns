@@ -16,7 +16,7 @@ echo pdns_db
 #https://docs.docker.com/swarm/scheduler/filter/
 
 CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_SLAVE}"
-CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
+#CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
 
 
 docker service create --name  pdns_slave_db \
