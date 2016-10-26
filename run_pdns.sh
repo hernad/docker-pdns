@@ -11,7 +11,7 @@ echo "=== MASTER PDNS ===="
 #docker volume create --name pdns_mysql_data
 
 CONSTRAINT="--constraint node.labels.role==${LABEL_PDNS_MASTER}"
-CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
+#CONSTRAINT+=" --constraint engine.labels.provider==digitalocean "
 
 
 
