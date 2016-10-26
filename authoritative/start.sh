@@ -86,6 +86,7 @@ else
 /usr/bin/pdnsutil add-record $PDNS_DOMAIN ns2 A $PDNS_AUTH_SLAVE_IP
 /usr/bin/pdnsutil add-record $PDNS_DOMAIN prvi A 1.1.1.1
 /usr/bin/pdnsutil list-zone $PDNS_DOMAIN
+/usr/bin/pdnsutil set-kind $PDNS_DOMAIN master
 
 #read -d '' SQL_CMD << EOF
 #INSERT INTO domains (name, type) VALUES ('$PDNS_DOMAIN', 'MASTER');
