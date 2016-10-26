@@ -51,16 +51,27 @@ $MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert into supermasters
 
 else
 
-read -d '' SQL_CMD << EOF
-INSERT INTO domains (name, type) VALUES ('$PDNS_DOMAIN', 'MASTER');
-INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$', 'ns1.$PDNS_DOMAIN hostmaster.$PDNS_DOMAIN 1', 'SOA', 86400, NULL);
-INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns1.$PDNS_DOMAIN', 'NS', 86400, NULL);
-INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns2.$PDNS_DOMAIN', 'NS', 86400, NULL);
-INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns1.$PDNS_DOMAIN', '10.0.0.1', 'A', 86400, NULL);
-INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns2.$PDNS_DOMAIN', '10.0.0.2', 'A', 86400, NULL);
-EOF
+# master
 
-$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert example.org sample records
+#export DOMAIN=test2.ba NS1_IP=10.0.2.5 NS2_IP=10.0.2.9
+pdnsutil create-zone $PDNS_DOMAIN ns1.$PDNS_DOMAIN
+pdnsutil add-record $PDNS_DOMAIN @ NS ns2.$PDNS_DOMAIN 
+pdnsutil add-record $PDNS_DOMAIN ns1 A $PDNS_AUTH_MASTER_IP
+pdnsutil add-record $PDNS_DOMAIN ns2 A $PDNS_AUTH_SLAVE_IP
+pdnsutil add-record $PDNS_DOMAIN prvi A 1.1.1.1
+pdnsutil list-zone $DOMAIN
+
+#read -d '' SQL_CMD << EOF
+#INSERT INTO domains (name, type) VALUES ('$PDNS_DOMAIN', 'MASTER');
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$', 'ns1.$PDNS_DOMAIN hostmaster.$PDNS_DOMAIN 1', 'SOA', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns1.$PDNS_DOMAIN', 'NS', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, '$PDNS_DOMAIN', 'ns2.$PDNS_DOMAIN', 'NS', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns1.$PDNS_DOMAIN', '10.0.0.1', 'A', 86400, NULL);
+#INSERT INTO records (domain_id, name, content, type, ttl, prio) VALUES (1, 'ns2.$PDNS_DOMAIN', '10.0.0.2', 'A', 86400, NULL);
+#EOF
+
+#$MYSQL_COMMAND ${MYSQL_DB} -e "$SQL_CMD"  # insert example.org sample records
+
 fi
 
 ### PDNS
